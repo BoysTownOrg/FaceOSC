@@ -45,7 +45,8 @@ void ofApp::loadSettings() {
 
 	xml.setTo("movie");
 	if(xml.exists("filename")) {
-		string filename = ofToDataPath((string)xml.getValue("filename", ""));
+        const auto result{ofSystemLoadDialog("load a video")};
+        const auto filename = result.filePath;
 		if(filename != "") {
 			if(!movie.load(filename)) {
 				ofLog(OF_LOG_ERROR, "Could not load movie \"%s\"", filename.c_str());
