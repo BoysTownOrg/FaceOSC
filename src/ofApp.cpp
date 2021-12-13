@@ -28,38 +28,19 @@ void ofApp::loadSettings() {
 	
 	// expects following tags to be wrapped by a main "faceosc" tag
 
-	xml.setTo("source");
-	xml.setToParent();
-
-	xml.setTo("camera");
-	xml.setToParent();
-
-	xml.setTo("movie");
-	if(xml.exists("filename")) {
-        const auto result{ofSystemLoadDialog("load a video")};
-        const auto filename = result.filePath;
-		if(filename != "") {
-			if(!movie.load(filename)) {
-				ofLog(OF_LOG_ERROR, "Could not load movie \"%s\"", filename.c_str());
-			}
-			movie.play();
-		}
-	}
-	else {
-		ofLog(OF_LOG_ERROR, "Movie filename tag not set in settings.");
-	}
-	if(xml.exists("volume")) {
-		float movieVolume = ofClamp(xml.getValue("volume", 1.0), 0, 1.0);
-		movie.setVolume(movieVolume);
-	}
-	if(xml.exists("speed")) {
-		float movieSpeed = ofClamp(xml.getValue("speed", 1.0), -16, 16);
-		movie.setSpeed(movieSpeed);
-	}
+    const auto result{ofSystemLoadDialog("load a video")};
+    const auto filename = result.filePath;
+    if(filename != "") {
+        if(!movie.load(filename)) {
+            ofLog(OF_LOG_ERROR, "Could not load movie \"%s\"", filename.c_str());
+        }
+        movie.play();
+    }
+    movie.setVolume(1.0);
+    movie.setSpeed(1.0);
 	bPaused = false;
 	movieWidth = movie.getWidth();
 	movieHeight = movie.getHeight();
-	xml.setToParent();
 
     ofSetWindowShape(movieWidth, movieHeight);
     setVideoSource(false);
