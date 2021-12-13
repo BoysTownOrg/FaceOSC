@@ -22,7 +22,6 @@ public:
 	int movieWidth, movieHeight;
 	int sourceWidth, sourceHeight;
 
-	ofVideoGrabber cam;
 	ofVideoPlayer movie;
 	ofBaseVideoDraws *videoSource;
     

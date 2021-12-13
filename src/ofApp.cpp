@@ -32,15 +32,6 @@ void ofApp::loadSettings() {
 	xml.setToParent();
 
 	xml.setTo("camera");
-	if(xml.exists("device")) {
-		cam.setDeviceID(xml.getValue("device", 0));
-	}
-	if(xml.exists("framerate")) {
-		cam.setDesiredFrameRate(xml.getValue("framerate", 30));
-	}
-	camWidth = xml.getValue("width", 640);
-	camHeight = xml.getValue("height", 480);
-	cam.initGrabber(camWidth, camHeight);
 	xml.setToParent();
 
 	xml.setTo("movie");
