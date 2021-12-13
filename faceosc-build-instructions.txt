@@ -1,0 +1,17 @@
+download openframeworks v0.11.2
+download openframeworks v0.10.1
+replace v0.11.2/addons/ofxOpenCv with v0.10.1/addons/ofxOpenCv
+download ofxFaceTracker tag 0.10.1
+copy ofxFaceTracker to v0.11.2/addons
+open project generator (v0.11.2/projectGenerator/projectGenerator.app)
+select "import", open v0.11.2/addons/ofxFaceTracker/FaceOSC
+select "Update", open in IDE (Xcode v13.1)
+select project ("FaceOSC" in lefthand pane) -> info
+change "macOS Deployment Target" to 10.15
+select target "FaceOSC" (below PROJECT "FaceOSC") -> General
+set "Deployment Target" to 10.15
+Push play button. Whenever met with "update project settings" dialog, click ok
+
+to run, copy v0.11.2/addons/ofxFaceTracker/libs/FaceTracker/model to v0.11.2/addons/ofxFaceTracker/FaceOSC/bin/data
+
+
