@@ -27,13 +27,8 @@ void ofApp::loadSettings() {
 	}
 	
 	// expects following tags to be wrapped by a main "faceosc" tag
-	
-	bool bUseCamera = true;
 
 	xml.setTo("source");
-	if(xml.exists("useCamera")) {
-		bUseCamera = xml.getValue("useCamera", false);
-	}
 	xml.setToParent();
 
 	xml.setTo("camera");
@@ -53,15 +48,13 @@ void ofApp::loadSettings() {
 		string filename = ofToDataPath((string)xml.getValue("filename", ""));
 		if(filename != "") {
 			if(!movie.load(filename)) {
-				ofLog(OF_LOG_ERROR, "Could not load movie \"%s\", reverting to camera input", filename.c_str());
-				bUseCamera = true;
+				ofLog(OF_LOG_ERROR, "Could not load movie \"%s\"", filename.c_str());
 			}
 			movie.play();
 		}
 	}
 	else {
-		ofLog(OF_LOG_ERROR, "Movie filename tag not set in settings, reverting to camera input");
-		bUseCamera = true;
+		ofLog(OF_LOG_ERROR, "Movie filename tag not set in settings.");
 	}
 	if(xml.exists("volume")) {
 		float movieVolume = ofClamp(xml.getValue("volume", 1.0), 0, 1.0);
@@ -76,14 +69,8 @@ void ofApp::loadSettings() {
 	movieHeight = movie.getHeight();
 	xml.setToParent();
 
-	if(bUseCamera) {
-		ofSetWindowShape(camWidth, camHeight);
-		setVideoSource(true);
-	}
-	else {
-		ofSetWindowShape(movieWidth, movieHeight);
-		setVideoSource(false);
-	}
+    ofSetWindowShape(movieWidth, movieHeight);
+    setVideoSource(false);
 
 	xml.setTo("face");
 	if(xml.exists("rescale")) {
@@ -165,10 +152,8 @@ void ofApp::draw() {
 		ofDrawBitmapString( "paused", 10, 32);
 	}
 
-	if(!bUseCamera) {
-		ofSetColor(255, 0, 0);
-		ofDrawBitmapString("speed "+ofToString(movie.getSpeed()), ofGetWidth()-100, 20);
-	}
+    ofSetColor(255, 0, 0);
+    ofDrawBitmapString("speed "+ofToString(movie.getSpeed()), ofGetWidth()-100, 20);
     
     if(bGuiVisible) {
         gui.draw();
@@ -199,17 +184,7 @@ void ofApp::keyPressed(int key) {
 }
 
 void ofApp::setVideoSource(bool useCamera) {
-
-	bUseCamera = useCamera;
-
-	if(bUseCamera) {
-		videoSource = &cam;
-		sourceWidth = camWidth;
-		sourceHeight = camHeight;
-	}
-	else {
-		videoSource = &movie;
-		sourceWidth = movieWidth;
-		sourceHeight = movieHeight;
-	}
+    videoSource = &movie;
+    sourceWidth = movieWidth;
+    sourceHeight = movieHeight;
 }
