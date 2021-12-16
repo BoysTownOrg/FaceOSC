@@ -18,7 +18,7 @@ void ofApp::loadSettings() {
     // if you want to package the app by itself without an outer
     // folder, you can place the "data" folder inside the app in
     // the Resources folder (right click on the app, "show contents")
-    //ofSetDataPathRoot("../Resources/data/");
+    ofSetDataPathRoot("../Resources/data/");
     
     // setup gui
     bGuiVisible = true;
