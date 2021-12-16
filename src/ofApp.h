@@ -15,7 +15,9 @@ public:
 	void keyPressed(int key);
 
 	void setVideoSource(bool useCamera);
-
+    
+    string host;
+    int port;
 	bool bUseCamera, bPaused;
 
 	int camWidth, camHeight;
