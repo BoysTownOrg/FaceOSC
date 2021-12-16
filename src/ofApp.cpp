@@ -10,6 +10,10 @@ static auto putWithTrailingComma(std::ostream &stream, const std::string &s) -> 
     return stream << s << ',';
 }
 
+static auto putWithTrailingComma(std::ostream &stream, float s) -> std::ostream & {
+    return stream << s << ',';
+}
+
 void ofApp::loadSettings() {
     // if you want to package the app by itself without an outer
     // folder, you can place the "data" folder inside the app in
@@ -32,7 +36,6 @@ void ofApp::loadSettings() {
             if(!movie.load(filename)) {
                 ofLog(OF_LOG_ERROR, "Could not load movie \"%s\"", filename.c_str());
             }
-            movie.play();
         }
     }
     movie.setVolume(1.0);
@@ -74,6 +77,9 @@ void ofApp::loadSettings() {
 	host = "localhost";
 	port = 8338;
 	osc.setup(host, port);
+    
+    movie.setLoopState(OF_LOOP_NONE);
+    movie.play();
 }
 
 void ofApp::setup() {
@@ -91,41 +97,28 @@ void ofApp::update() {
         clearBundle();
         
         if(tracker.getFound()) {
-            addMessage("/found", 1);
             
             if (bIncludeGestures) {
-                addMessage("/gesture/mouth/width", tracker.getGesture(ofxFaceTracker::MOUTH_WIDTH));
-                addMessage("/gesture/mouth/height", tracker.getGesture(ofxFaceTracker::MOUTH_HEIGHT));
-                addMessage("/gesture/eyebrow/left", tracker.getGesture(ofxFaceTracker::LEFT_EYEBROW_HEIGHT));
-                addMessage("/gesture/eyebrow/right", tracker.getGesture(ofxFaceTracker::RIGHT_EYEBROW_HEIGHT));
-                addMessage("/gesture/eye/left", tracker.getGesture(ofxFaceTracker::LEFT_EYE_OPENNESS));
-                addMessage("/gesture/eye/right", tracker.getGesture(ofxFaceTracker::RIGHT_EYE_OPENNESS));
-                addMessage("/gesture/jaw", tracker.getGesture(ofxFaceTracker::JAW_OPENNESS));
-                addMessage("/gesture/nostrils", tracker.getGesture(ofxFaceTracker::NOSTRIL_FLARE));
+                putWithTrailingComma(outputFile, tracker.getGesture(ofxFaceTracker::MOUTH_WIDTH));
+                putWithTrailingComma(outputFile, tracker.getGesture(ofxFaceTracker::MOUTH_HEIGHT));
+                putWithTrailingComma(outputFile, tracker.getGesture(ofxFaceTracker::LEFT_EYEBROW_HEIGHT));
+                putWithTrailingComma(outputFile, tracker.getGesture(ofxFaceTracker::RIGHT_EYEBROW_HEIGHT));
+                putWithTrailingComma(outputFile, tracker.getGesture(ofxFaceTracker::LEFT_EYE_OPENNESS));
+                putWithTrailingComma(outputFile, tracker.getGesture(ofxFaceTracker::RIGHT_EYE_OPENNESS));
+                putWithTrailingComma(outputFile, tracker.getGesture(ofxFaceTracker::JAW_OPENNESS));
+                putWithTrailingComma(outputFile, tracker.getGesture(ofxFaceTracker::NOSTRIL_FLARE));
             }
             
-            if(bIncludeAllVertices){
-                ofVec2f center = tracker.getPosition();
-                ofxOscMessage msg;
-                msg.setAddress("/raw");
-                for(ofVec2f p : tracker.getImagePoints()) {
-                    if (bNormalizeRaw) {
-                        msg.addFloatArg((p.x-center.x)/tracker.getScale());
-                        msg.addFloatArg((p.y-center.y)/tracker.getScale());
-                    }
-                    else {
-                        msg.addFloatArg(p.x);
-                        msg.addFloatArg(p.y);
-                    }
-                }
-                bundle.addMessage(msg);
+            for(ofVec2f p : tracker.getImagePoints()) {
+                putWithTrailingComma(outputFile, p.x);
+                putWithTrailingComma(outputFile, p.y);
             }
+            
+            putWithTrailingComma(outputFile, "end");
 
         } else {
-            addMessage("/found", 0);
         }
-        
-        sendBundle();
+        outputFile << "end\n";
 		rotationMatrix = tracker.getRotationMatrix();
 	}
 }
