@@ -2,6 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSDesktopFolderUsageDescription</key>
+	<string>to read videos and write csv files</string>
+	<key>NSDownloadsFolderUsageDescription</key>
+	<string>to read videos and write csv files</string>
+	<key>NSDocumentsFolderUsageDescription</key>
+	<string>to read videos and write csv files</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleExecutable</key>
