@@ -5,6 +5,8 @@
 #include "ofxCv.h"
 #include "FaceOsc.h"
 
+#include <fstream>
+
 class ofApp : public ofBaseApp, public FaceOsc {
 public:
 	void loadSettings();
@@ -15,6 +17,8 @@ public:
 	void keyPressed(int key);
 
 	void setVideoSource(bool useCamera);
+    
+    std::ofstream outputFile;
     
     ofParameter<bool> bIncludeGestures;
     ofParameter<bool> bIncludeAllVertices;

@@ -19,15 +19,15 @@ void ofApp::loadSettings() {
     gui.add(bIncludeAllVertices.set("raw", false));
     gui.add(bNormalizeRaw.set("normalize raw", false));
 	
-	// expects following tags to be wrapped by a main "faceosc" tag
-
-    const auto result{ofSystemLoadDialog("load a video")};
-    const auto filename = result.filePath;
-    if(filename != "") {
-        if(!movie.load(filename)) {
-            ofLog(OF_LOG_ERROR, "Could not load movie \"%s\"", filename.c_str());
+    {
+        const auto result{ofSystemLoadDialog("load a video")};
+        const auto filename = result.filePath;
+        if(filename != "") {
+            if(!movie.load(filename)) {
+                ofLog(OF_LOG_ERROR, "Could not load movie \"%s\"", filename.c_str());
+            }
+            movie.play();
         }
-        movie.play();
     }
     movie.setVolume(1.0);
     movie.setSpeed(1.0);
@@ -45,6 +45,12 @@ void ofApp::loadSettings() {
     tracker.setAttempts(1);
 	bDrawMesh = true;
 	tracker.setup();
+    
+    
+    const auto result{ofSystemSaveDialog("out.csv", "save results")};
+    const auto filename = result.filePath;
+    outputFile.open(filename);
+    
 	host = "localhost";
 	port = 8338;
 	osc.setup(host, port);
