@@ -14,8 +14,4 @@ public:
     
 	ofxOscSender osc;
 	ofxOscBundle bundle;
-    
-    ofParameter<bool> bIncludeGestures;
-    ofParameter<bool> bIncludeAllVertices;
-    ofParameter<bool> bNormalizeRaw;
 };

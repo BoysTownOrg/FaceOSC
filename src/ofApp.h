@@ -16,6 +16,10 @@ public:
 
 	void setVideoSource(bool useCamera);
     
+    ofParameter<bool> bIncludeGestures;
+    ofParameter<bool> bIncludeAllVertices;
+    ofParameter<bool> bNormalizeRaw;
+    
     string host;
     int port;
 	bool bUseCamera, bPaused;
