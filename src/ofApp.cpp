@@ -1,8 +1,18 @@
 #include "ofApp.h"
 #include "ofxXmlPoco.h"
 
+#include <sstream>
+
 using namespace ofxCv;
 using namespace cv;
+
+static auto putWithTrailingComma(std::ostream &stream, const std::string &s) -> std::ostream & {
+    return stream << s << ',';
+}
+
+static auto putWithTrailingComma(std::ostream &stream, float s) -> std::ostream & {
+    return stream << s << ',';
+}
 
 void ofApp::loadSettings() {
     // if you want to package the app by itself without an outer
@@ -15,26 +25,18 @@ void ofApp::loadSettings() {
     gui.setup();
     gui.setName("FaceOSC");
     gui.setPosition(0, 0);
-    gui.add(bIncludePose.set("pose", true));
     gui.add(bIncludeGestures.set("gesture", true));
     gui.add(bIncludeAllVertices.set("raw", false));
     gui.add(bNormalizeRaw.set("normalize raw", false));
-    
-    // load settings file
-	ofxXmlPoco xml;
-	if(!xml.load(ofToDataPath("settings.xml"))) {
-		return;
-	}
 	
-	// expects following tags to be wrapped by a main "faceosc" tag
-
-    const auto result{ofSystemLoadDialog("load a video")};
-    const auto filename = result.filePath;
-    if(filename != "") {
-        if(!movie.load(filename)) {
-            ofLog(OF_LOG_ERROR, "Could not load movie \"%s\"", filename.c_str());
+    {
+        const auto result{ofSystemLoadDialog("load a video")};
+        const auto filename = result.filePath;
+        if(filename != "") {
+            if(!movie.load(filename)) {
+                ofLog(OF_LOG_ERROR, "Could not load movie \"%s\"", filename.c_str());
+            }
         }
-        movie.play();
     }
     movie.setVolume(1.0);
     movie.setSpeed(1.0);
@@ -45,36 +47,39 @@ void ofApp::loadSettings() {
     ofSetWindowShape(movieWidth, movieHeight);
     setVideoSource(false);
 
-	xml.setTo("face");
-	if(xml.exists("rescale")) {
-		tracker.setRescale(xml.getValue("rescale", 1.0));
-	}
-	if(xml.exists("iterations")) {
-		tracker.setIterations(xml.getValue("iterations", 5));
-	}
-	if(xml.exists("clamp")) {
-		tracker.setClamp(xml.getValue("clamp", 3.0));
-	}
-	if(xml.exists("tolerance")) {
-		tracker.setTolerance(xml.getValue("tolerance", 0.01));
-	}
-	if(xml.exists("attempts")) {
-		tracker.setAttempts(xml.getValue("attempts", 1));
-	}
+    tracker.setRescale(1.0);
+    tracker.setIterations(5);
+    tracker.setClamp(3.0);
+    tracker.setTolerance(0.01);
+    tracker.setAttempts(1);
 	bDrawMesh = true;
-	if(xml.exists("drawMesh")) {
-		bDrawMesh = (bool) xml.getValue("drawMesh", 1);
-	}
 	tracker.setup();
-	xml.setToParent();
-
-	xml.setTo("osc");
-	host = xml.getValue("host", "localhost");
-	port = xml.getValue("port", 8338);
+    
+    
+    const auto result{ofSystemSaveDialog("out.csv", "save results")};
+    const auto filename = result.filePath;
+    outputFile.open(filename);
+    putWithTrailingComma(outputFile, "mouthWidth");
+    putWithTrailingComma(outputFile, "mouthHeight");
+    putWithTrailingComma(outputFile, "leftEyebrowHeight");
+    putWithTrailingComma(outputFile, "rightEyebrowHeight");
+    putWithTrailingComma(outputFile, "leftEyeOpenness");
+    putWithTrailingComma(outputFile, "rightEyeOpenness");
+    putWithTrailingComma(outputFile, "jawOpenness");
+    putWithTrailingComma(outputFile, "nostrilFlare");
+    for (auto i{0}; i < 67; ++i) {
+        std::stringstream stream;
+        stream << "vertices/" << i << '/';
+        putWithTrailingComma(outputFile, stream.str() + 'x');
+        putWithTrailingComma(outputFile, stream.str() + 'y');
+    }
+    outputFile << "end";
+	host = "localhost";
+	port = 8338;
 	osc.setup(host, port);
-	xml.setToParent();
-	
-	xml.clear();
+    
+    movie.setLoopState(OF_LOOP_NONE);
+    movie.play();
 }
 
 void ofApp::setup() {
@@ -89,7 +94,31 @@ void ofApp::update() {
 	videoSource->update();
 	if(videoSource->isFrameNew()) {
 		tracker.update(toCv(*videoSource));
-        sendFaceOsc(tracker);
+        clearBundle();
+        
+        if(tracker.getFound()) {
+            
+            if (bIncludeGestures) {
+                putWithTrailingComma(outputFile, tracker.getGesture(ofxFaceTracker::MOUTH_WIDTH));
+                putWithTrailingComma(outputFile, tracker.getGesture(ofxFaceTracker::MOUTH_HEIGHT));
+                putWithTrailingComma(outputFile, tracker.getGesture(ofxFaceTracker::LEFT_EYEBROW_HEIGHT));
+                putWithTrailingComma(outputFile, tracker.getGesture(ofxFaceTracker::RIGHT_EYEBROW_HEIGHT));
+                putWithTrailingComma(outputFile, tracker.getGesture(ofxFaceTracker::LEFT_EYE_OPENNESS));
+                putWithTrailingComma(outputFile, tracker.getGesture(ofxFaceTracker::RIGHT_EYE_OPENNESS));
+                putWithTrailingComma(outputFile, tracker.getGesture(ofxFaceTracker::JAW_OPENNESS));
+                putWithTrailingComma(outputFile, tracker.getGesture(ofxFaceTracker::NOSTRIL_FLARE));
+            }
+            
+            for(ofVec2f p : tracker.getImagePoints()) {
+                putWithTrailingComma(outputFile, p.x);
+                putWithTrailingComma(outputFile, p.y);
+            }
+            
+            putWithTrailingComma(outputFile, "end");
+
+        } else {
+        }
+        outputFile << "end\n";
 		rotationMatrix = tracker.getRotationMatrix();
 	}
 }
