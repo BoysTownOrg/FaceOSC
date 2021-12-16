@@ -19,12 +19,6 @@ void ofApp::loadSettings() {
     gui.add(bIncludeGestures.set("gesture", true));
     gui.add(bIncludeAllVertices.set("raw", false));
     gui.add(bNormalizeRaw.set("normalize raw", false));
-    
-    // load settings file
-	ofxXmlPoco xml;
-	if(!xml.load(ofToDataPath("settings.xml"))) {
-		return;
-	}
 	
 	// expects following tags to be wrapped by a main "faceosc" tag
 
@@ -45,36 +39,16 @@ void ofApp::loadSettings() {
     ofSetWindowShape(movieWidth, movieHeight);
     setVideoSource(false);
 
-	xml.setTo("face");
-	if(xml.exists("rescale")) {
-		tracker.setRescale(xml.getValue("rescale", 1.0));
-	}
-	if(xml.exists("iterations")) {
-		tracker.setIterations(xml.getValue("iterations", 5));
-	}
-	if(xml.exists("clamp")) {
-		tracker.setClamp(xml.getValue("clamp", 3.0));
-	}
-	if(xml.exists("tolerance")) {
-		tracker.setTolerance(xml.getValue("tolerance", 0.01));
-	}
-	if(xml.exists("attempts")) {
-		tracker.setAttempts(xml.getValue("attempts", 1));
-	}
+    tracker.setRescale(1.0);
+    tracker.setIterations(5);
+    tracker.setClamp(3.0);
+    tracker.setTolerance(0.01);
+    tracker.setAttempts(1);
 	bDrawMesh = true;
-	if(xml.exists("drawMesh")) {
-		bDrawMesh = (bool) xml.getValue("drawMesh", 1);
-	}
 	tracker.setup();
-	xml.setToParent();
-
-	xml.setTo("osc");
-	host = xml.getValue("host", "localhost");
-	port = xml.getValue("port", 8338);
+	host = "localhost";
+	port = 8338;
 	osc.setup(host, port);
-	xml.setToParent();
-	
-	xml.clear();
 }
 
 void ofApp::setup() {
