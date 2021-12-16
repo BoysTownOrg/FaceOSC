@@ -12,8 +12,6 @@ public:
 	void addMessage(string address, int data);
 	void sendBundle();
     
-    void sendFaceOsc(ofxFaceTracker& tracker);
-    
 	string host;
 	int port;
 	ofxOscSender osc;
