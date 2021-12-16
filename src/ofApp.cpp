@@ -1,8 +1,14 @@
 #include "ofApp.h"
 #include "ofxXmlPoco.h"
 
+#include <sstream>
+
 using namespace ofxCv;
 using namespace cv;
+
+static auto putWithTrailingComma(std::ostream &stream, const std::string &s) -> std::ostream & {
+    return stream << s << ',';
+}
 
 void ofApp::loadSettings() {
     // if you want to package the app by itself without an outer
@@ -50,7 +56,21 @@ void ofApp::loadSettings() {
     const auto result{ofSystemSaveDialog("out.csv", "save results")};
     const auto filename = result.filePath;
     outputFile.open(filename);
-    
+    putWithTrailingComma(outputFile, "mouthWidth");
+    putWithTrailingComma(outputFile, "mouthHeight");
+    putWithTrailingComma(outputFile, "leftEyebrowHeight");
+    putWithTrailingComma(outputFile, "rightEyebrowHeight");
+    putWithTrailingComma(outputFile, "leftEyeOpenness");
+    putWithTrailingComma(outputFile, "rightEyeOpenness");
+    putWithTrailingComma(outputFile, "jawOpenness");
+    putWithTrailingComma(outputFile, "nostrilFlare");
+    for (auto i{0}; i < 67; ++i) {
+        std::stringstream stream;
+        stream << "vertices/" << i << '/';
+        putWithTrailingComma(outputFile, stream.str() + 'x');
+        putWithTrailingComma(outputFile, stream.str() + 'y');
+    }
+    outputFile << "end";
 	host = "localhost";
 	port = 8338;
 	osc.setup(host, port);
