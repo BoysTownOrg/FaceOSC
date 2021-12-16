@@ -15,7 +15,6 @@ void ofApp::loadSettings() {
     gui.setup();
     gui.setName("FaceOSC");
     gui.setPosition(0, 0);
-    gui.add(bIncludePose.set("pose", true));
     gui.add(bIncludeGestures.set("gesture", true));
     gui.add(bIncludeAllVertices.set("raw", false));
     gui.add(bNormalizeRaw.set("normalize raw", false));

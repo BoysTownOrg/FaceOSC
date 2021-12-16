@@ -6,14 +6,6 @@ void FaceOsc::sendFaceOsc(ofxFaceTracker& tracker) {
     if(tracker.getFound()) {
         addMessage("/found", 1);
         
-        if(bIncludePose) {
-            ofVec2f position = tracker.getPosition();
-            addMessage("/pose/position", position);
-            addMessage("/pose/scale", tracker.getScale());
-            ofVec3f orientation = tracker.getOrientation();
-            addMessage("/pose/orientation", orientation);
-        }
-        
         if (bIncludeGestures) {
             addMessage("/gesture/mouth/width", tracker.getGesture(ofxFaceTracker::MOUTH_WIDTH));
             addMessage("/gesture/mouth/height", tracker.getGesture(ofxFaceTracker::MOUTH_HEIGHT));

@@ -19,7 +19,6 @@ public:
 	ofxOscSender osc;
 	ofxOscBundle bundle;
     
-    ofParameter<bool> bIncludePose;
     ofParameter<bool> bIncludeGestures;
     ofParameter<bool> bIncludeAllVertices;
     ofParameter<bool> bNormalizeRaw;
