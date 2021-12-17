@@ -1,0 +1,3 @@
+namespace ofxCv {}
+
+namespace cv {}
