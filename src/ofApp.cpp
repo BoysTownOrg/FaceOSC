@@ -1,7 +1,6 @@
 #include "ofApp.h"
 #include "ofxXmlPoco.h"
 
-#include <filesystem>
 #include <sstream>
 
 using namespace ofxCv;
@@ -15,6 +14,15 @@ static auto putWithTrailingComma(std::ostream &stream, const std::string &s)
 static auto putWithTrailingComma(std::ostream &stream, float s)
     -> std::ostream & {
   return stream << s << ',';
+}
+
+static auto filename(const std::string &path) -> std::string {
+  return path.substr(path.find_last_of('/') + 1);
+}
+
+static auto replace_extension(std::string path, const std::string &extension)
+    -> std::string {
+  return path.replace(path.find_last_of('.') + 1, std::string::npos, extension);
 }
 
 void ofApp::loadSettings() {
@@ -53,8 +61,7 @@ void ofApp::loadSettings() {
   tracker.setup();
 
   const auto result{ofSystemSaveDialog(
-      std::filesystem::path{videoFilePath}.filename().replace_extension("csv"),
-      "save results")};
+      replace_extension(filename(videoFilePath), "csv"), "save results")};
   const auto filename = result.filePath;
   outputFile.open(filename);
   putWithTrailingComma(outputFile, "mouthWidth");
