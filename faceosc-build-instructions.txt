@@ -3,6 +3,8 @@ download openframeworks v0.10.1
 replace v0.11.2/addons/ofxOpenCv with v0.10.1/addons/ofxOpenCv
 download ofxFaceTracker tag 0.10.1
 copy ofxFaceTracker to v0.11.2/addons
+download ofxCv commit SHA-1 209a3986a8f8e1928c7a11f6e1c5d8ea5406e639
+copy ofxCv to v0.11.2/addons
 open project generator (v0.11.2/projectGenerator/projectGenerator.app)
 select "import", open v0.11.2/addons/ofxFaceTracker/FaceOSC
 select "Update", open in IDE (Xcode v13.1)
